@@ -52,7 +52,7 @@ function extract(inDir, outDir) {
 
         // Parse header
         let header = new Buffer(9 * 4);
-        let bytesRead = fs.readSync(fd, header, 0, 9 * 4, null);
+        fs.readSync(fd, header, 0, 9 * 4, null);
         let imageFormat = header.readUInt32LE(20);
         let numFrames = header.readUInt32LE(24);
         console.log('width ', header.readUInt32LE(0));
@@ -65,40 +65,43 @@ function extract(inDir, outDir) {
         console.log('trueImageSize ', header.readUInt32LE(32));
 
         let fps = new Buffer(8);
-        bytesRead = fs.readSync(fd, fps, 0, 8, null);
+        fs.readSync(fd, fps, 0, 8, null);
         console.log('fps ', fps.readDoubleLE());
 
         let ext;
         switch (imageFormat) {
-          case 100:
-          case 200:
-            ext = 'raw';
-            break;
-          case 101:
-            ext = 'brgb8';
-            break;
-          case 102:
-          case 201:
-            ext = 'jpg';
-            break;
-          case 103:
-            ext = 'jbrgb';
-            break;
-          case 1:
-          case 2:
-            ext = 'png';
-            break;
+        case 100:
+        case 200:
+          ext = 'raw';
+          break;
+        case 101:
+          ext = 'brgb8';
+          break;
+        case 102:
+        case 201:
+          ext = 'jpg';
+          break;
+        case 103:
+          ext = 'jbrgb';
+          break;
+        case 1:
+        case 2:
+          ext = 'png';
+          break;
+        default:
+          console.error(`Invalid extenstion format ${imageFormat}`);
+          return;
         }
 
         // Extract images
         fs.seekSync(fd, 432, SEEK_CUR);
         for (let k = 0; k < numFrames; k++) {
           let sizeBuffer = new Buffer(4);
-          bytesRead = fs.readSync(fd, sizeBuffer, 0, 4, null);
+          fs.readSync(fd, sizeBuffer, 0, 4, null);
           let size = sizeBuffer.readUInt32LE();
 
           let img = new Buffer(size);
-          bytesRead = fs.readSync(fd, img, 0, size, null);
+          fs.readSync(fd, img, 0, size, null);
 
           let imgPath = path.join(seqName, `${k}.${ext}`);
           console.log(`saving ${imgPath}`);
@@ -111,8 +114,7 @@ function extract(inDir, outDir) {
         }
       } catch (err) {
         console.error(`Failed to extract ${files[0]} ${err}`);
-      }
-      finally {
+      } finally {
         fs.closeSync(fd);
       }
     }
