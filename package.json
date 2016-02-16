@@ -2,14 +2,22 @@
   "name": "caltech_converter",
   "version": "1.0.0",
   "description": "Caltech pedestrian image converter",
-  "main": "caltech_image_convertor.js",
+  "main": "caltech_pd.js",
   "author": "Anshul Jain <aajain@gmail.com>",
+  "scripts": {
+    "lint": "eslint caltech_pd.js"
+  },
   "dependencies": {
     "readdir": "0.0.13",
     "fs-ext": "0.5.0"
   },
+  "devDependencies": {
+    "babel-eslint": "4.1.8",
+    "eslint": "1.10.3"
+  },
   "engines": {
     "node": "4.2"
-  }
+  },
+  "repository": "jainanshul/caltech-pedestrian-dataset-extractor"
 }
 
