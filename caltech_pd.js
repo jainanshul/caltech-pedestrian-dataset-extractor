@@ -8,6 +8,7 @@ const IN_DIR = 'data';
 const OUT_DIR = 'images';
 const SKIP = 28 + 8 + 512;
 const SEEK_CUR = 1;
+let infoOnly = false;
 
 function createDirectory(path) {
   try {
@@ -42,8 +43,10 @@ function extract(inDir, outDir) {
     // Read all sequence files
     for (let i = 0; i < files.length; i++) {
       let seqName = path.join(objectPath, files[i]);
-      console.log(`extracting ${path.join(seqImagesPath, files[i])} ...`);
-      createDirectory(seqName);
+      console.log(`File ${path.join(seqImagesPath, files[i])}: `);
+      if (!infoOnly) {
+        createDirectory(seqName);
+      }
 
       let fd = fs.openSync(path.join(seqImagesPath, files[i]), 'r');
 
@@ -63,6 +66,10 @@ function extract(inDir, outDir) {
         console.log('imageFormat ', imageFormat);
         console.log('numFrames ', numFrames);
         console.log('trueImageSize ', header.readUInt32LE(32));
+        console.log();
+        if (infoOnly) {
+          continue;
+        }
 
         let fps = new Buffer(8);
         fs.readSync(fd, fps, 0, 8, null);
@@ -124,9 +131,12 @@ function extract(inDir, outDir) {
 if (require.main === module) {
   let _inDir = IN_DIR;
   let _outDir = OUT_DIR;
-  if (process.argv.length === 4) {
+  if (process.argv.length >= 4) {
     _inDir = process.argv[2];
     _outDir = process.argv[3];
+  }
+  if (process.argv.length >= 5) {
+    infoOnly = process.argv[4];
   }
   extract(_inDir, _outDir);
 }
