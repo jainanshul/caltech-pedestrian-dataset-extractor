@@ -10,6 +10,7 @@ This script will download the caltech pedestrian dataset in a folder called ```d
 
 ##### Extract Dataset
 ```
+npm install
 node caltech_pd.js
 ```
 
